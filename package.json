@@ -1,0 +1,23 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "A node.js app that queries and updates inventory in a department store",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesseharold/Bamazon.git"
+  },
+  "author": "Harold the Square",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jesseharold/Bamazon/issues"
+  },
+  "homepage": "https://github.com/jesseharold/Bamazon#readme",
+  "dependencies": {
+    "inquirer": "^2.0.0",
+    "mysql": "^2.12.0"
+  }
+}
