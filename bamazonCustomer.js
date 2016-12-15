@@ -10,6 +10,8 @@ var connection = mysql.createConnection({
     database: "Bamazon"
 });
 
+var currentItem;
+
 
 connection.connect(function(err) {
     if (err){
@@ -26,9 +28,21 @@ connection.connect(function(err) {
             name: "quantity"
         }
     ]).then(function(input){
-        getInStock(input.productID, input.quantity);
+        getItem(input.productID, function(){
+            checkInStock(input.quantity);
+        });
     });
 });
+
+function checkInStock(quantity){
+    //console.log("checkInStock");
+    if (currentItem.stock_quantity < quantity){ 
+        console.log(`Sorry, we only have ${currentItem.stock_quantity} of that item at the moment.`);
+    } else {
+        submitOrder(currentItem.ID, quantity, currentItem.stock_quantity);
+    }
+}
+
 function showAllInventory(){
     connection.query(
         'SELECT * FROM products', function(err, data) {
@@ -38,33 +52,28 @@ function showAllInventory(){
             }
     });
 }
-function getInStock(id, quantityRequested){
-    connection.query(
-        'SELECT stock_quantity FROM products WHERE ?', [{ID: id}], function(err, data) {
-            if (err) throw err;
 
-            if (data[0].stock_quantity < quantityRequested){ 
-                console.log(`Sorry, we only have ${data[0].stock_quantity} of that item at the moment.`);
-            } else {
-                submitOrder(id, quantityRequested);
-            }
-    });
-}
-function submitOrder(id, quantity){
+function submitOrder(id, quantity, previousStockAmount){
     // updating the SQL database to reflect the remaining quantity.
     // Once the update goes through, show the customer the total cost of their purchase.
+    update("ID", id, "stock_quantity", previousStockAmount-quantity);
+    console.log(`The total cost of your order is ${quantity*currentItem.price}`);
 }
+
 function create(product_name, department_name, price, stock_quantity){
     connection.query(
         'INSERT INTO products SET ?', [{product_name: product_name, department_name: department_name, price: price, stock_quantity: stock_quantity}], function(err, data) {
             if (err) throw err;
     });
 }
-function read(column, value){
+
+function getItem(id, callback){
     connection.query(
-        'SELECT * FROM products WHERE ?', [{[column]: value}], function(err, data) {
+        `SELECT * FROM products WHERE ID = ${id}`, function(err, data) {
             if (err) throw err;
-            return data;
+            currentItem = data[0];
+            //console.log(`set currentItem: ${JSON.stringify(currentItem)}`);
+            callback();
     });
 }
 
