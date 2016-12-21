@@ -5,6 +5,7 @@ var crud = require("./Crud");
 var connection = mysql.createConnection(connectionInfo);
 
 var currentItem;
+var lowInventoryThreshhold = 5;
 
 function viewProducts(){
     //console.log("list every available item: the item IDs, names, prices, and quantities");
@@ -13,8 +14,7 @@ function viewProducts(){
 }
 
 function viewLowInventory(){
-    console.log("list all items with a inventory count lower than five");
-    connection.query('SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE stock_quantity < 5', function(err, data) {
+    connection.query('SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE stock_quantity < ?', [lowInventoryThreshhold], function(err, data) {
             if (err) throw err;
             for (var i = 0; i < data.length; i++){
                 var productInfo = `
@@ -31,7 +31,6 @@ function viewLowInventory(){
 }
 
 function addInventory(){
-    console.log("display a prompt that will let the manager 'add more' of any item currently in the store");
     inquirer.prompt([
         {
             message: "What is the ID of the product you would like to add inventory to?",
@@ -44,15 +43,32 @@ function addInventory(){
         // get current stock quantity
         connection.query('SELECT stock_quantity FROM products WHERE ?', {ID: input.productID}, function(err, data) {
             if (err) throw err;
-            var new_quantity = input.quantity + data[0].stock_quantity;
+            var new_quantity = parseInt(input.quantity) + parseInt(data[0].stock_quantity);
             crud.update("ID", input.productID, "stock_quantity", new_quantity);
+            start();
         });
     });
 }
 
 function newProduct(){
-    console.log("add a completely new product to the store");
-    crud.create();
+    inquirer.prompt([
+        {
+            message: "What is the name of the new product?",
+            name: "product_name"
+        },{
+            message: "What is the price of the new product?",
+            name: "price"
+        },{
+            message: "What department is it in?",
+            name: "department"
+        },{
+            message: "How many are in stock?",
+            name: "quantity"
+        }
+    ]).then(function(input){
+        crud.create(input.product_name, input.price, input.department, input.quantity);
+        start();
+    });
 }
 
 function start(){
@@ -64,7 +80,7 @@ function start(){
             choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
         }
     ]).then(function(input){
-        switch (answer.action) {
+        switch (input.action) {
             case "View Products for Sale":
                 viewProducts();
                 break;
