@@ -6,43 +6,6 @@ var connection = mysql.createConnection(connectionInfo);
 
 var currentItem;
 
-connection.connect(function(err) {
-    if (err){
-        throw err;
-    }
-    console.log(`Connected as id ${connection.threadId}`);
-    start();
-});
-
-function start(){
-    inquirer.prompt([
-        {
-            message: "What would you like to do?",
-            name: "action",
-            type: "list",
-            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
-        }
-    ]).then(function(input){
-        switch (answer.action) {
-            case "View Products for Sale":
-                viewProducts();
-                break;
-
-            case "View Low Inventory":
-                viewLowInventory();
-                break;
-
-            case "Add to Inventory":
-                addInventory();
-                break;
-
-            case "Add New Product":
-                newProduct();
-                break;
-        }
-    });
-}
-
 function viewProducts(){
     //console.log("list every available item: the item IDs, names, prices, and quantities");
     crud.showAllInventory();
@@ -87,8 +50,44 @@ function addInventory(){
     });
 }
 
-
 function newProduct(){
     console.log("add a completely new product to the store");
     crud.create();
 }
+
+function start(){
+    inquirer.prompt([
+        {
+            message: "What would you like to do?",
+            name: "action",
+            type: "list",
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+        }
+    ]).then(function(input){
+        switch (answer.action) {
+            case "View Products for Sale":
+                viewProducts();
+                break;
+
+            case "View Low Inventory":
+                viewLowInventory();
+                break;
+
+            case "Add to Inventory":
+                addInventory();
+                break;
+
+            case "Add New Product":
+                newProduct();
+                break;
+        }
+    });
+}
+
+connection.connect(function(err) {
+    if (err){
+        throw err;
+    }
+    console.log(`Connected as id ${connection.threadId}`);
+    start();
+});
