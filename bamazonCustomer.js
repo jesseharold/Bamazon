@@ -33,7 +33,7 @@ function start(){
 
 function showAllInventory(){
     connection.query(
-        'SELECT * FROM products', function(err, data) {
+        'SELECT product_name, ID, department_name, price, stock_quantity FROM products', function(err, data) {
             if (err) throw err;
             for (var i = 0; i < data.length; i++){
                 var productInfo = `
@@ -50,7 +50,7 @@ function showAllInventory(){
 
 function getItem(id, callback){
     connection.query(
-        `SELECT * FROM products WHERE ID = ${id}`, function(err, data) {
+        `SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE ID = ${id}`, function(err, data) {
             if (err) throw err;
             currentItem = data[0];
             //console.log(`set currentItem: ${JSON.stringify(currentItem)}`);
