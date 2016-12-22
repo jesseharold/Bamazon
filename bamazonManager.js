@@ -27,10 +27,16 @@ function addInventory(){
     inquirer.prompt([
         {
             message: "What is the ID of the product you would like to add inventory to?",
-            name: "productID"
+            name: "productID",
+            validate: function(number){
+                return !isNaN(number);
+            }
         }, {
             message: "How many items would you like to add?",
-            name: "quantity"
+            name: "quantity",
+            validate: function(number){
+                return !isNaN(number);
+            }
         }
     ]).then(function(input){
         // get current stock quantity
@@ -50,13 +56,19 @@ function newProduct(){
             name: "product_name"
         },{
             message: "What is the price of the new product?",
-            name: "price"
+            name: "price",
+            validate: function(number){
+                return !isNaN(number);
+            }
         },{
             message: "What department is it in?",
             name: "department"
         },{
             message: "How many are in stock?",
-            name: "quantity"
+            name: "quantity",
+            validate: function(number){
+                return !isNaN(number);
+            }
         }
     ]).then(function(input){
         crud.create(input.product_name, input.department, input.price, input.quantity);

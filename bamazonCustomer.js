@@ -12,10 +12,16 @@ function start(){
     inquirer.prompt([
         {
             message: "What is the ID of the product you would like to buy?",
-            name: "productID"
+            name: "productID",
+            validate: function(number){
+                return !isNaN(number);
+            }
         }, {
             message: "How many items would you like to buy?",
-            name: "quantity"
+            name: "quantity",
+            validate: function(number){
+                return !isNaN(number);
+            }
         }
     ]).then(function(input){
         getItem(input.productID, function(){
@@ -51,37 +57,41 @@ function submitOrder(id, quantity, previousStockAmount){
     var price = quantity*currentItem.price;
     console.log(`The total cost of your order is ${formatMoney(price)}`);
     // Add the revenue from each transaction to the `total_sales` column for the related department.
-    
+    var query = `UPDATE departments SET total_sales = total_sales + ${price} WHERE department_name = "${currentItem.department_name}"`;
+     connection.query(
+        query, function(err, data) {
+            if (err) throw err;
+    });
     start();
 }
 
 function formatMoney(number) {
-  //round to 2 decimal places
-  number = Math.round(number * 100) / 100;
-  //convert to string
-  number += "";
-  var numberParts = number.split(".");
-  var dollars = numberParts[0];
-  var commas = Math.floor((dollars.length - 1) / 3);
-  var result = [];
-  for (var i = 1; i <= commas + 1; i++) {
-  	var startChunk = dollars.length - (3 * i);
-    if (startChunk < 0){
-    	startChunk = 0;
+    //round to 2 decimal places
+    number = Math.round(number * 100) / 100;
+    //convert to string
+    number += "";
+    var numberParts = number.split(".");
+    var dollars = numberParts[0];
+    var commas = Math.floor((dollars.length - 1) / 3);
+    var result = [];
+    for (var i = 1; i <= commas + 1; i++) {
+        var startChunk = dollars.length - (3 * i);
+        if (startChunk < 0){
+            startChunk = 0;
+        }
+        var endChunk = dollars.length - (3 * (i - 1));
+        result.unshift(dollars.slice(startChunk, endChunk));
     }
-  	var endChunk = dollars.length - (3 * (i - 1));
-    result.unshift(dollars.slice(startChunk, endChunk));
-  }
-  
-  var cents = "";
-  if(numberParts[1]){
-  	cents = "." + numberParts[1];
-    if (cents.length == 2){
-        cents += "0";
+    
+    var cents = "";
+    if(numberParts[1]){
+        cents = "." + numberParts[1];
+        if (cents.length == 2){
+            cents += "0";
+        }
     }
-  }
-  
-  return("$" + result.join(",") + cents);
+    
+    return("$" + result.join(",") + cents);
 }
 
 connection.connect(function(err) {
