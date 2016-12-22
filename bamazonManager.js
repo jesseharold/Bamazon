@@ -3,19 +3,18 @@ var inquirer = require("inquirer");
 var connectionInfo = require("./LocalConnection");
 var crud = require("./Crud");
 var connection = mysql.createConnection(connectionInfo);
-var table = require('console.table');
+var table = require("console.table");
 
 var currentItem;
 var lowInventoryThreshhold = 5;
 
 function viewProducts(){
-    //console.log("list every available item: the item IDs, names, prices, and quantities");
     crud.showAllInventory();
     start();
 }
 
 function viewLowInventory(){
-    connection.query('SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE stock_quantity < ?', [lowInventoryThreshhold], function(err, data) {
+    connection.query("SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE stock_quantity < ?", [lowInventoryThreshhold], function(err, data) {
         if (err) throw err;
         console.log("...");
         console.table(data);
@@ -40,7 +39,7 @@ function addInventory(){
         }
     ]).then(function(input){
         // get current stock quantity
-        connection.query('SELECT stock_quantity FROM products WHERE ?', {ID: input.productID}, function(err, data) {
+        connection.query("SELECT stock_quantity FROM products WHERE ?", {ID: input.productID}, function(err, data) {
             if (err) throw err;
             var new_quantity = parseInt(input.quantity) + parseInt(data[0].stock_quantity);
             crud.update("ID", input.productID, "stock_quantity", new_quantity);
@@ -53,7 +52,7 @@ function newProduct(){
     // locally stored list of all departments
     var allDepartments = [];
     connection.query(
-        'SELECT department_name FROM products GROUP BY department_name', function(err, data) {
+        "SELECT department_name FROM products GROUP BY department_name", function(err, data) {
             if (err) throw err;
             for (var i = 0; i < data.length; i++){
                 allDepartments.push(data[i].department_name);

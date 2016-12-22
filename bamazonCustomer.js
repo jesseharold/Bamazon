@@ -98,6 +98,6 @@ connection.connect(function(err) {
     if (err){
         throw err;
     }
-    //console.log(`Connected as id ${connection.threadId}`);
+    console.log(`Connected as id ${connection.threadId}`);
     start();
 });

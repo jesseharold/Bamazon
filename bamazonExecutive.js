@@ -3,11 +3,11 @@ var inquirer = require("inquirer");
 var connectionInfo = require("./LocalConnection");
 var crud = require("./Crud");
 var connection = mysql.createConnection(connectionInfo);
-var table = require('console.table');
+var table = require("console.table");
 
 function viewSales(){
     connection.query( 
-        'SELECT department_id, department_name, department_name, overhead_costs, total_sales, (total_sales-overhead_costs) AS profit FROM departments', function(err, data) {
+        "SELECT department_id, department_name, department_name, overhead_costs, total_sales, (total_sales-overhead_costs) AS profit FROM departments", function(err, data) {
             if (err) throw err;
             console.log("...");
             console.table(data);
@@ -34,7 +34,7 @@ function getDepartmentName(){
 
 function createDepartment(name, overhead){
     connection.query(
-        'INSERT INTO departments SET ?', [{department_name: name, overhead_costs: overhead, total_sales: 0}], function(err, data) {
+        "INSERT INTO departments SET ?", [{department_name: name, overhead_costs: overhead, total_sales: 0}], function(err, data) {
             if (err) throw err;
             console.log(name + "added to departments");
     });
