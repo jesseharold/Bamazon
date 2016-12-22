@@ -3,6 +3,7 @@ var inquirer = require("inquirer");
 var connectionInfo = require("./LocalConnection");
 var crud = require("./Crud");
 var connection = mysql.createConnection(connectionInfo);
+var table = require('console.table');
 
 var currentItem;
 var lowInventoryThreshhold = 5;
@@ -15,17 +16,9 @@ function viewProducts(){
 
 function viewLowInventory(){
     connection.query('SELECT product_name, ID, department_name, price, stock_quantity FROM products WHERE stock_quantity < ?', [lowInventoryThreshhold], function(err, data) {
-            if (err) throw err;
-            for (var i = 0; i < data.length; i++){
-                var productInfo = `
-                ${data[i].product_name}
-                ID: \t\t\t${data[i].ID}
-                department: \t\t${data[i].department_name}
-                price per unit: \t${data[i].price}
-                # in stock: \t\t${data[i].stock_quantity}
-                `;
-                console.log(productInfo);
-            }
+        if (err) throw err;
+        console.log("...");
+        console.table(data);
     });
     start();
 }

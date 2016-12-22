@@ -48,8 +48,40 @@ function submitOrder(id, quantity, previousStockAmount){
     // updating the SQL database to reflect the remaining quantity.
     // Once the update goes through, show the customer the total cost of their purchase.
     crud.update("ID", id, "stock_quantity", previousStockAmount-quantity);
-    console.log(`The total cost of your order is ${quantity*currentItem.price}`);
+    var price = quantity*currentItem.price;
+    console.log(`The total cost of your order is ${formatMoney(price)}`);
+    // Add the revenue from each transaction to the `total_sales` column for the related department.
+    
     start();
+}
+
+function formatMoney(number) {
+  //round to 2 decimal places
+  number = Math.round(number * 100) / 100;
+  //convert to string
+  number += "";
+  var numberParts = number.split(".");
+  var dollars = numberParts[0];
+  var commas = Math.floor((dollars.length - 1) / 3);
+  var result = [];
+  for (var i = 1; i <= commas + 1; i++) {
+  	var startChunk = dollars.length - (3 * i);
+    if (startChunk < 0){
+    	startChunk = 0;
+    }
+  	var endChunk = dollars.length - (3 * (i - 1));
+    result.unshift(dollars.slice(startChunk, endChunk));
+  }
+  
+  var cents = "";
+  if(numberParts[1]){
+  	cents = "." + numberParts[1];
+    if (cents.length == 2){
+        cents += "0";
+    }
+  }
+  
+  return("$" + result.join(",") + cents);
 }
 
 connection.connect(function(err) {
