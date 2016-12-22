@@ -29,13 +29,13 @@ function addInventory(){
             message: "What is the ID of the product you would like to add inventory to?",
             name: "productID",
             validate: function(number){
-                return !isNaN(number);
+                return !isNaN(number) ? true : "Please enter a number.";
             }
         }, {
             message: "How many items would you like to add?",
             name: "quantity",
             validate: function(number){
-                return !isNaN(number);
+                return !isNaN(number) ? true : "Please enter a number.";
             }
         }
     ]).then(function(input){
@@ -58,7 +58,7 @@ function newProduct(){
             message: "What is the price of the new product?",
             name: "price",
             validate: function(number){
-                return !isNaN(number);
+                return !isNaN(number) ? true : "Please enter a number.";
             }
         },{
             message: "What department is it in?",
@@ -67,7 +67,7 @@ function newProduct(){
             message: "How many are in stock?",
             name: "quantity",
             validate: function(number){
-                return !isNaN(number);
+                return !isNaN(number) ? true : "Please enter a number.";
             }
         }
     ]).then(function(input){

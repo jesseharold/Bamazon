@@ -6,8 +6,8 @@ var connection = mysql.createConnection(connectionInfo);
 var table = require('console.table');
 
 function viewSales(){
-    connection.query(
-        'SELECT department_id, department_name, department_name, overhead_costs, total_sales FROM departments', function(err, data) {
+    connection.query( 
+        'SELECT department_id, department_name, department_name, overhead_costs, total_sales, (total_sales-overhead_costs) AS profit FROM departments', function(err, data) {
             if (err) throw err;
             console.log("...");
             console.table(data);
@@ -24,7 +24,7 @@ function getDepartmentName(){
             message: "What is this department's overhead cost?",
             name: "overhead",
             validate: function(number){
-                return !isNaN(number);
+                return !isNaN(number) ? true : "Please enter a number.";
             }
         }
     ]).then(function(input){
