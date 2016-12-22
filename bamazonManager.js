@@ -66,7 +66,7 @@ function newProduct(){
             name: "quantity"
         }
     ]).then(function(input){
-        crud.create(input.product_name, input.price, input.department, input.quantity);
+        crud.create(input.product_name, input.department, input.price, input.quantity);
         start();
     });
 }

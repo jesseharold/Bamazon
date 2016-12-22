@@ -2,6 +2,8 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var connectionInfo = require("./LocalConnection");
 var connection = mysql.createConnection(connectionInfo);
+var table = require('console.table');
+
 
 var Crud = {
     create : function(product_name, department_name, price, stock_quantity){
@@ -15,16 +17,8 @@ var Crud = {
         connection.query(
             'SELECT product_name, ID, department_name, price, stock_quantity FROM products', function(err, data) {
                 if (err) throw err;
-                for (var i = 0; i < data.length; i++){
-                    var productInfo = `
-                    ${data[i].product_name}
-                    ID: \t\t\t${data[i].ID}
-                    department: \t\t${data[i].department_name}
-                    price per unit: \t${data[i].price}
-                    # in stock: \t\t${data[i].stock_quantity}
-                    `;
-                    console.log(productInfo);
-                }
+                console.log("...");
+                console.table(data);
         });
     },
 
