@@ -50,6 +50,15 @@ function addInventory(){
 }
 
 function newProduct(){
+    // locally stored list of all departments
+    var allDepartments = [];
+    connection.query(
+        'SELECT department_name FROM products GROUP BY department_name', function(err, data) {
+            if (err) throw err;
+            for (var i = 0; i < data.length; i++){
+                allDepartments.push(data[i].department_name);
+            }
+    });
     inquirer.prompt([
         {
             message: "What is the name of the new product?",
@@ -62,7 +71,9 @@ function newProduct(){
             }
         },{
             message: "What department is it in?",
-            name: "department"
+            name: "department",
+            type: "list",
+            choices: allDepartments
         },{
             message: "How many are in stock?",
             name: "quantity",
